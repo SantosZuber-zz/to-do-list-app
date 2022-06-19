@@ -77,6 +77,10 @@ form {
     text-align: center;
 }
 
+.task {
+    width: 300px;
+}
+
 .edit-mode {
     animation-name: editing;
     animation-duration: 2s;
