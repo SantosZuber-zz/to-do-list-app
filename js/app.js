@@ -5,7 +5,7 @@ const submitBtn = document.getElementById("submit-btn");
 
 
 class TaskElement {
-    constructor() {
+    constructor(value) {
         this.create = function () {
             const taskDiv = document.createElement("div");
             taskDiv.classList.add("task");
@@ -13,8 +13,8 @@ class TaskElement {
 
             //Done button
             const doneBtn = document.createElement("button");
-            doneBtn.classList.add("done-btn");
-            doneBtn.innerHTML = "Done"
+            doneBtn.innerHTML = `<ion-icon class="done-icon" name="checkmark-circle"></ion-icon>`
+            doneBtn.classList.add("btn");
             taskDiv.appendChild(doneBtn);
             doneBtn.onclick = function () {
                 tasksContainer.removeChild(taskDiv);
@@ -24,30 +24,37 @@ class TaskElement {
             const taskInput = document.createElement("input");
             taskInput.setAttribute("type", "text");
             taskInput.setAttribute("value", `${taskName}`);
+            taskInput.setAttribute("maxlength", "22");
             taskInput.setAttribute("readonly", "");
             taskInput.classList.add("task-input");
             taskDiv.appendChild(taskInput);
 
-            //Delete button
-            const deleteBtn = document.createElement("button");
-            deleteBtn.classList.add("delete-btn");
-            deleteBtn.innerHTML = "Delete"
-            taskDiv.appendChild(deleteBtn);
-            deleteBtn.onclick = function () {
-                tasksContainer.removeChild(taskDiv);
-            }
-
-
             //Edit button
             const editBtn = document.createElement("button");
-            editBtn.classList.add("edit-btn");
-            editBtn.innerHTML = "Edit"
+            let editMode = false;
+            editBtn.classList.add("btn");
+            editBtn.innerHTML = `<ion-icon class="edit-icon" name="create"></ion-icon>`
             taskDiv.appendChild(editBtn);
             editBtn.onclick = function () {
-                //Edit mode
-                taskInput.removeAttribute("readonly");
+                if (!editMode) {
+                    editMode = true;
+                    taskInput.removeAttribute("readonly");
+                    taskInput.classList.add("edit-mode");
+                } else {
+                    if (taskInput.value.length > 3 && !taskInput.value.includes("<", ">")) {
+                        editMode = false;
+                        taskInput.setAttribute("readonly", "");
+                        taskInput.classList.remove("edit-mode");
+                    } else {
+                        Swal.fire({
+                            title: 'Error!',
+                            text: 'Please insert more than 3 characters and avoid using "<" or ">" symbols',
+                            icon: 'warning',
+                            confirmButtonText: 'Ok'
+                        });
+                    }
+                }
             }
-
 
         }
     }
@@ -56,7 +63,17 @@ class TaskElement {
 
 submitBtn.onclick = function () {
     taskName = document.getElementById("task-name-input").value;
-    const task = new TaskElement();
-    task.create();
+    if (taskName.length > 3 && !taskName.includes("<", ">")) {
+        const task = new TaskElement(taskName);
+        task.create();
+    } else {
+        Swal.fire({
+            title: 'Error!',
+            text: 'Please insert more than 3 characters and avoid using "<" or ">" symbols',
+            icon: 'warning',
+            confirmButtonText: 'Ok'
+        });
+    }
+    document.getElementById("task-name-input").value = "";
     return false;
 }
