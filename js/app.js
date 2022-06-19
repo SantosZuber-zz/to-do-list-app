@@ -5,7 +5,7 @@ const submitBtn = document.getElementById("submit-btn");
 
 
 class TaskElement {
-    constructor(value) {
+    constructor() {
         this.create = function () {
             const taskDiv = document.createElement("div");
             taskDiv.classList.add("task");
